@@ -1,4 +1,4 @@
-import type { Config } from 'drizzle-kit';
+import { defineConfig } from 'drizzle-kit';
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
@@ -6,11 +6,11 @@ if (!process.env.POSTGRES_URL) {
     throw new Error('POSTGRES_URL environment variable is not set');
 }
 
-export default {
+export default defineConfig({
     schema: './src/db/schema.ts',
     out: './drizzle',
-    driver: 'pg',
+    dialect: 'postgresql',
     dbCredentials: {
-        connectionString: process.env.POSTGRES_URL,
+        url: process.env.POSTGRES_URL,
     },
-} satisfies Config;
+});
