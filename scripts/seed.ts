@@ -1,88 +1,118 @@
-
 import { db } from '../src/lib/db';
 import { products, variants } from '../src/db/schema';
 import * as dotenv from 'dotenv';
+import sharp from 'sharp';
 
-// Load environment variables
 dotenv.config({ path: '.env.local' });
 
-// Pre-computed LQIPs (generated via scripts/generate-lqip.ts)
-// These represent the "blurry" version of the high-res images below.
-const LQIP_GRAY = "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoKAAcAAUAmJaQAAuQA/v02V///754A/v3tFv//9z///8kX/4j/4v/b///ywf/39sP/9/bD//f2w//39sP/9/bD/gAA";
-const LQIP_BROWN = "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoKAAcAAUAmJaQAAuQA/v02V///754A/v3tFv//9z///8kX/4j/4v/b///ywf/39sP/9/bD//f2w//39sP/9/bD/gAA"; // Reusing for demo
-
-async function main() {
-    console.log('🌱 Seeding database...');
-
+// Helper function to generate LQIP
+async function generateLqip(imageUrl: string): Promise<string> {
     try {
-        // 1. Sofa "Cloud"
-        const [sofa] = await db.insert(products).values({
-            name: 'Sofá Cloud Modular',
-            slug: 'sofa-cloud-modular',
-            description: 'Sofá modular de diseño italiano, tapizado en lino de alta resistencia.',
-            basePrice: '2499.00',
-            imageUrl: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=2070&auto=format&fit=crop',
-            lqip: LQIP_GRAY,
-        }).returning();
+        const response = await fetch(imageUrl);
+        const buffer = await response.arrayBuffer();
 
-        console.log(`Created product: ${sofa.name}`);
+        const data = await sharp(Buffer.from(buffer))
+            .resize(10)
+            .webp({ quality: 20 })
+            .toBuffer();
 
-        // Variants for Sofa
-        await db.insert(variants).values([
-            {
-                productId: sofa.id,
-                type: 'fabric',
-                name: 'Lino Gris',
-                value: '#e5e7eb',
-                priceAdjustment: '0',
-            },
-            {
-                productId: sofa.id,
-                type: 'fabric',
-                name: 'Terciopelo Azul',
-                value: '#1e3a8a',
-                priceAdjustment: '200.00',
-            }
-        ]);
-
-        // 2. Mesa de Centro "Nogal"
-        const [table] = await db.insert(products).values({
-            name: 'Mesa de Centro Nogal',
-            slug: 'mesa-centro-nogal',
-            description: 'Mesa de centro esculpida en madera maciza de nogal.',
-            basePrice: '899.00',
-            imageUrl: 'https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=2068&auto=format&fit=crop',
-            lqip: LQIP_BROWN,
-        }).returning();
-
-        console.log(`Created product: ${table.name}`);
-
-        // 3. Sillón "Eames Style"
-        await db.insert(products).values({
-            name: 'Sillón Lounge Cuero',
-            slug: 'sillon-lounge-cuero',
-            description: 'Icono del diseño moderno. Cuero italiano y madera contrachapada.',
-            basePrice: '3200.00',
-            imageUrl: 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=2068&auto=format&fit=crop',
-            lqip: LQIP_BROWN,
-        });
-
-        // 4. Lámpara de Pie "Arco"
-        await db.insert(products).values({
-            name: 'Lámpara de Pie Arco',
-            slug: 'lampara-pie-arco',
-            description: 'Base de mármol Carrara y arco de acero inoxidable.',
-            basePrice: '550.00',
-            imageUrl: 'https://images.unsplash.com/photo-1513506003011-3b6444450f72?q=80&w=2070&auto=format&fit=crop',
-            lqip: LQIP_GRAY,
-        });
-
-        console.log('✅ Seeding completed!');
+        return `data:image/webp;base64,${data.toString("base64")}`;
     } catch (error) {
-        console.error('❌ Error seeding:', error);
-    } finally {
-        process.exit(0);
+        console.error(`Error generating LQIP for ${imageUrl}:`, error);
+        return "data:image/webp;base64,UklGRlIAAABXRUJQVlA4IEYAAADwAQCdASoKAAcAAUAmJaQAAuQA/v02V///754A/v3tFv//9z///8kX/4j/4v/b///ywf/39sP/9/bD//f2w//39sP/9/bD/gAA";
     }
 }
 
-main();
+const sampleProducts = [
+    {
+        name: "Sofá Moderno Escandinavo",
+        slug: "sofa-moderno-escandinavo",
+        description: "Sofá de 3 plazas con diseño minimalista, tapizado en tela de alta calidad. Perfecto para salas de estar contemporáneas.",
+        basePrice: "2499.00",
+        imageUrl: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+    },
+    {
+        name: "Mesa de Comedor Rustica",
+        slug: "mesa-comedor-rustica",
+        description: "Mesa de madera maciza con acabado rústico, capacidad para 6-8 personas. Ideal para espacios amplios.",
+        basePrice: "1899.00",
+        imageUrl: "https://images.unsplash.com/photo-1617806118233-18e1de247200?w=800&q=80",
+    },
+    {
+        name: "Silla Moderna Tapizada",
+        slug: "silla-moderna-tapizada",
+        description: "Silla de comedor con asiento acolchado y patas de madera. Comodidad y estilo en equilibrio perfecto.",
+        basePrice: "349.00",
+        imageUrl: "https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?w=800&q=80",
+    },
+    {
+        name: "Estantería Industrial",
+        slug: "estanteria-industrial",
+        description: "Estantería de estilo industrial con estructura de metal negro y repisas de madera. 5 niveles de almacenamiento.",
+        basePrice: "899.00",
+        imageUrl: "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?w=800&q=80",
+    },
+    {
+        name: "Sillón Relax Premium",
+        slug: "sillon-relax-premium",
+        description: "Sillón reclinable con reposapiés integrado, tapizado en cuero sintético de primera calidad.",
+        basePrice: "1299.00",
+        imageUrl: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80",
+    },
+    {
+        name: "Mesa Centro Cristal",
+        slug: "mesa-centro-cristal",
+        description: "Mesa de centro con tapa de cristal templado y estructura cromada. Diseño elegante y moderno.",
+        basePrice: "549.00",
+        imageUrl: "https://images.unsplash.com/photo-1611269154421-4e27233ac5c7?w=800&q=80",
+    },
+    {
+        name: "Escritorio Ejecutivo",
+        slug: "escritorio-ejecutivo",
+        description: "Escritorio de oficina con amplios cajones y superficie de trabajo. Madera de nogal con detalles en metal.",
+        basePrice: "1750.00",
+        imageUrl: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80",
+    },
+    {
+        name: "Cama King Size",
+        slug: "cama-king-size",
+        description: "Cama de matrimonio con cabecero acolchado, estructura reforzada y diseño contemporáneo.",
+        basePrice: "2100.00",
+        imageUrl: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80",
+    },
+];
+
+async function main() {
+    console.log('🌱 Seeding database with sample products...\n');
+
+    // Clear existing data (variants first due to foreign key)
+    await db.delete(variants);
+    console.log('✓ Cleared existing variants');
+    await db.delete(products);
+    console.log('✓ Cleared existing products\n');
+
+    for (const product of sampleProducts) {
+        console.log(`Processing: ${product.name}...`);
+
+        // Generate LQIP
+        const lqip = await generateLqip(product.imageUrl);
+
+        // Insert product
+        await db.insert(products).values({
+            ...product,
+            lqip,
+        });
+
+        console.log(`  ✓ Added with LQIP`);
+    }
+
+    console.log('\n✅ Database seeded successfully!');
+    console.log(`📦 Total products: ${sampleProducts.length}`);
+}
+
+main()
+    .then(() => process.exit(0))
+    .catch((err) => {
+        console.error('❌ Seed failed:', err);
+        process.exit(1);
+    });

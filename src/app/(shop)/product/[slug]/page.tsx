@@ -9,7 +9,7 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 interface ProductPageProps {
-    params: { slug: string };
+    params: Promise<{ slug: string }>;
     searchParams: { [key: string]: string | string[] | undefined };
 }
 
@@ -17,9 +17,12 @@ interface ProductPageProps {
 export const revalidate = 3600;
 
 export default async function ProductPage({ params, searchParams }: ProductPageProps) {
+    // In Next.js 16, params is a Promise
+    const { slug } = await params;
+
     // 1. Fetch Product
     const product = await db.query.products.findFirst({
-        where: eq(products.slug, params.slug),
+        where: eq(products.slug, slug),
     });
 
     if (!product) {
