@@ -4,6 +4,7 @@ import { products } from '@/db/schema';
 import { ProductCard } from '@/components/commerce/product-card';
 import { FilterSidebar } from '@/components/commerce/filter-sidebar';
 import { ilike, or } from 'drizzle-orm';
+import { Suspense } from 'react';
 
 // Force dynamic rendering to handle searchParams properly if needed,
 // but for pure filtering, allow caching.
@@ -44,7 +45,9 @@ export default async function ShopPage({ searchParams }: ShopPageProps) {
                 <div className="grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-4">
                     {/* Filters */}
                     <aside className="hidden lg:block lg:col-span-1">
-                        <FilterSidebar />
+                        <Suspense fallback={<div>Cargando filtros...</div>}>
+                            <FilterSidebar />
+                        </Suspense>
                     </aside>
 
                     {/* Product Grid */}

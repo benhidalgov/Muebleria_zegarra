@@ -6,6 +6,7 @@ import { VariantSelector } from '@/components/commerce/variant-selector';
 import { formatPrice } from '@/lib/utils';
 import { eq } from 'drizzle-orm';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 interface ProductPageProps {
     params: { slug: string };
@@ -81,7 +82,9 @@ export default async function ProductPage({ params, searchParams }: ProductPageP
                     </div>
 
                     <div className="mt-6">
-                        <VariantSelector variants={productVariants} />
+                        <Suspense fallback={<div>Cargando opciones...</div>}>
+                            <VariantSelector variants={productVariants} />
+                        </Suspense>
                     </div>
 
                     <div className="mt-10 flex">
