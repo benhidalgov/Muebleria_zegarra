@@ -48,7 +48,7 @@ export function FilterSidebar() {
         <div className="space-y-8">
             {FILTERS.map((section) => (
                 <div key={section.id}>
-                    <h3 className="font-medium text-gray-900 mb-4">{section.name}</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-white mb-4">{section.name}</h3>
                     <ul className="space-y-3">
                         {section.options.map((option) => {
                             const isActive = searchParams.get(section.id) === option.value;
@@ -56,11 +56,11 @@ export function FilterSidebar() {
                                 <li key={option.value}>
                                     <button
                                         onClick={() => {
-                                            router.push(`/?${createQueryString(section.id, option.value)}`, { scroll: false });
+                                            router.push(`/productos?${createQueryString(section.id, option.value)}`, { scroll: false });
                                         }}
                                         className={cn(
-                                            "text-sm transition-colors hover:text-gray-900 text-left block w-full",
-                                            isActive ? "font-semibold text-black underline" : "text-gray-500"
+                                            "text-sm transition-colors hover:text-gray-900 dark:hover:text-white text-left block w-full",
+                                            isActive ? "font-semibold text-black dark:text-white underline" : "text-gray-500 dark:text-gray-400"
                                         )}
                                     >
                                         {option.label}

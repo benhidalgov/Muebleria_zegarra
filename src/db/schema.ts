@@ -45,7 +45,8 @@ export const users = pgTable("user", {
     email: text("email").notNull().unique(),
     emailVerified: timestamp("emailVerified", { mode: "date" }),
     image: text("image"),
-    role: roleEnum('role').default('customer').notNull(), // Custom role field
+    password: text("password"), // Hashed with bcrypt, nullable for OAuth
+    role: roleEnum('role').default('customer').notNull(),
 });
 
 export const accounts = pgTable(

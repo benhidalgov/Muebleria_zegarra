@@ -42,7 +42,7 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
         <div className="space-y-8">
             {Object.entries(variantsByType).map(([type, options]) => (
                 <div key={type}>
-                    <h3 className="text-sm font-medium text-gray-900 capitalize mb-4">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white capitalize mb-4">
                         {type === 'fabric' ? 'Tela' : type === 'wood' ? 'Madera' : type}
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
@@ -53,24 +53,24 @@ export function VariantSelector({ variants }: VariantSelectorProps) {
                                     key={option.id}
                                     onClick={() => updateUrl(type, option.value)}
                                     className={cn(
-                                        "relative flex items-center justify-between rounded-lg border p-4 text-sm font-medium shadow-sm outline-none transition-all hover:border-gray-400 focus:outline-none",
+                                        "relative flex items-center justify-between rounded-lg border p-4 text-sm font-medium shadow-sm outline-none transition-all hover:border-gray-400 dark:hover:border-gray-500 focus:outline-none",
                                         isActive
-                                            ? "border-black ring-1 ring-black"
-                                            : "border-gray-200 text-gray-900"
+                                            ? "border-black dark:border-white ring-1 ring-black dark:ring-white"
+                                            : "border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100"
                                     )}
                                 >
                                     <div className="flex items-center gap-3">
                                         {/* Color Swatch simulation */}
                                         {(type === 'fabric' || type === 'wood') && (
                                             <span
-                                                className="h-6 w-6 rounded-full border border-gray-200"
+                                                className="h-6 w-6 rounded-full border border-gray-200 dark:border-gray-600"
                                                 style={{ backgroundColor: option.value.startsWith('#') ? option.value : '#ccc' }}
                                             />
                                         )}
                                         <span>{option.name}</span>
                                     </div>
                                     {Number(option.priceAdjustment) > 0 && (
-                                        <span className="text-gray-500 text-xs">
+                                        <span className="text-gray-500 dark:text-gray-400 text-xs">
                                             +{formatPrice(option.priceAdjustment!)}
                                         </span>
                                     )}

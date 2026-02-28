@@ -7,6 +7,7 @@ import { users } from "@/db/schema";
 import Credentials from "next-auth/providers/credentials";
 import { eq } from "drizzle-orm";
 import { authConfig } from "./auth.config";
+import bcrypt from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     ...authConfig,
@@ -19,16 +20,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 password: { label: "Password", type: "password" },
             },
             authorize: async (credentials) => {
-                if (!credentials?.email) return null;
+                if (!credentials?.email || !credentials?.password) return null;
 
                 const user = await db.query.users.findFirst({
                     where: eq(users.email, String(credentials.email))
                 });
 
-                if (!user) return null;
+                if (!user || !user.password) return null;
+
+                const passwordMatch = await bcrypt.compare(
+                    String(credentials.password),
+                    user.password
+                );
+
+                if (!passwordMatch) return null;
+
                 return user;
             },
         }),
     ],
 });
-

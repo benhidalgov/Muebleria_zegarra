@@ -1,33 +1,21 @@
 import Link from 'next/link';
 import { Image } from '@/components/ui/image';
+import { RadialSearchMenu } from '@/components/commerce/radial-search-menu';
 
 export default function LandingPage() {
     return (
         <>
             {/* Hero Section */}
-            <section className="relative h-[600px] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black dark:from-black dark:via-gray-900 dark:to-gray-800">
+            <section className="relative min-h-[700px] md:min-h-[800px] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black dark:from-black dark:via-gray-900 dark:to-gray-800 overflow-hidden">
                 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1920')] bg-cover bg-center opacity-20"></div>
-                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6">
+                <div className="relative z-10 text-center px-4 max-w-4xl mx-auto flex flex-col items-center">
+                    <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-4">
                         Mueblería Zegarra
                     </h1>
-                    <p className="text-xl md:text-2xl text-gray-200 mb-8 font-light">
+                    <p className="text-lg md:text-xl text-gray-300 mb-10 font-light">
                         Muebles de alta calidad que transforman espacios en hogares
                     </p>
-                    <div className="flex gap-4 justify-center flex-wrap">
-                        <Link
-                            href="/productos"
-                            className="px-8 py-4 bg-white text-black dark:bg-gray-100 dark:text-black font-semibold rounded-md hover:bg-gray-100 dark:hover:bg-gray-200 transition-all shadow-lg"
-                        >
-                            Explorar Colección
-                        </Link>
-                        <Link
-                            href="#sobre-nosotros"
-                            className="px-8 py-4 border-2 border-white text-white font-semibold rounded-md hover:bg-white hover:text-black transition-all"
-                        >
-                            Conocer Más
-                        </Link>
-                    </div>
+                    <RadialSearchMenu />
                 </div>
             </section>
 
